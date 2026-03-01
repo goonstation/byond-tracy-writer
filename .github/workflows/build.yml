@@ -1,38 +1,79 @@
-name: Build
+name: Build and Release
+
 on: [push, pull_request]
+
 jobs:
   windows:
     name: Windows Build
     runs-on: windows-latest
+
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up x86 build tools
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x86
         vsversion: 2022
+
     - name: Compile byond-tracy
       run: |
         cl.exe /nologo /std:c11 /O2 /LD /DNDEBUG prof.c ws2_32.lib /Fe:prof.dll /experimental:c11atomics
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: byond-tracy-windows
         path: prof.dll
+
   linux:
     name: Linux Build
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
+
     - name: Install gcc-multilib
       run: |
         sudo apt-get update
         sudo apt-get -y install gcc-multilib
+
     - name: Compile byond-tracy
       run: |
         gcc -D_FILE_OFFSET_BITS=64 -std=c11 -m32 -shared -fPIC -Ofast -s -DNDEBUG prof.c -pthread -o libprof.so
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: byond-tracy-linux
         path: libprof.so
+
+  release:
+    name: Release
+    needs: [windows, linux]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get Short Git Hash
+      id: git_hash
+      run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+    - name: Get Latest Supported BYOND Version
+      id: byond_version
+      run: |
+        max_build=$(grep "BYOND_MAX_BUILD" offsets/windows.h | cut -d' ' -f3)
+        echo "version=$max_build" >> $GITHUB_OUTPUT
+
+    - uses: actions/download-artifact@v4
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: build-${{ steps.git_hash.outputs.hash }}
+        name: ${{ steps.byond_version.outputs.version }} (build ${{ steps.git_hash.outputs.hash }})
+        files: |
+          byond-tracy-windows/prof.dll
+          byond-tracy-linux/libprof.so

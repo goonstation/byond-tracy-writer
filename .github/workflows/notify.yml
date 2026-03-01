@@ -1,4 +1,4 @@
-name: Dispatch BYOND Tracy Writer Build
+name: Notify goonhub of new BYOND Tracy Writer
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  dispatch:
+  notify:
     name: Notify goonstation/goonhub
     runs-on: ubuntu-latest
 

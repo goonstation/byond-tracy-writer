@@ -1,6 +1,6 @@
-# Para-byond-tracy
+# byond-tracy-writer
 
-Para-byond-tracy glues together a byond server the tracy profiler allowing you to analyze and visualize proc calls. This differs from the standard byond-tracy by the nature of it writing to flatfiles inside `data/profiler/`. While these files can be up to 30 gigabytes in size, they allow the RAM usage of DreamDaemon to remain very low at runtime, which is useful for profiling entire rounds (A profile from a full round needs >48GB of RAM just to view, let alone save at runtime).
+byond-tracy-writer glues together a byond server the tracy profiler allowing you to analyze and visualize proc calls. This differs from the standard byond-tracy by the nature of it writing to flatfiles inside `data/profiler/`. While these files can be up to 30 gigabytes in size, they allow the RAM usage of DreamDaemon to remain very low at runtime, which is useful for profiling entire rounds (A profile from a full round needs >48GB of RAM just to view, let alone save at runtime).
 
 Note that the files generated cannot be loaded straight into tracy. You must use `replay.py` to load the `.utracy` file and stream "it over the network" (localhost) into `capture.exe` as part of Tracy. You can stream straight into `Tracy.exe`, but this is not advised due to performance overhead.
 
@@ -51,7 +51,7 @@ A massive thanks to `mafemergency` for even making this possible. The below read
 
 ## supported tracy versions
 
-None built in, you need to reply these.
+N/A
 
 ## usage
 
@@ -85,7 +85,7 @@ init will return the filename it writes to upon success - the filename will alwa
 no build system included, simply invoke your preferred c11 compiler.
 examples:
 
-(AA recommended: If you have the MSVC++ buildchain, open `x86 Native Tools Command Prompt for VS 2022` and then cd to this repo. `cl` should be on your path inside of that CLI environment)
+(AA recommended: If you have the MSVC++ buildchain, open `x86 Native Tools Command Prompt for VS 2022` (**!!2022!!**) and then cd to this repo. `cl` should be on your path inside of that CLI environment)
 (Absolucy recommended: just use clang on windows, tbh)
 
 ```console
@@ -100,6 +100,6 @@ clang.exe -std=c11 -m32 -shared -Ofast3 -DNDEBUG -fuse-ld=lld-link prof.c -lws2_
 gcc -D_FILE_OFFSET_BITS=64 -std=c11 -m32 -shared -fPIC -Ofast -s -DNDEBUG prof.c -pthread -o libprof.so
 ```
 
-## remarks
+## Source
 
-byond-tracy is in its infancy and is not production ready for live servers.
+Based on para-byond-tracy: https://github.com/ParadiseSS13/byond-tracy

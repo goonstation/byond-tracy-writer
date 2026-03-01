@@ -1,0 +1,24 @@
+name: Dispatch BYOND Tracy Writer Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  dispatch:
+    name: Notify goonstation/goonhub
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Send repository_dispatch
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.GOONHUB_TRACY_WRITER_DISPATCH_TOKEN }}
+          repository: goonstation/goonhub
+          event-type: byond_tracy_writer_update
+          client-payload: >-
+            {"ref":"${{ github.ref }}","ref_name":"${{ github.ref_name }}","sha":"${{ github.sha }}"}

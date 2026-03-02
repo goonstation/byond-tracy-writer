@@ -2,7 +2,7 @@ name: Update Offsets
 
 on:
   schedule:
-    - cron: "0 20 * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
         commit-message: "offsets: add builds up to ${{ steps.update.outputs.new_max }}"
         branch: "auto/offsets-${{ steps.update.outputs.new_max }}"
         delete-branch: true
-        title: "offsets: add BYOND builds ${{ steps.update.outputs.new_builds }}"
+        title: "offsets: add BYOND builds up to ${{ steps.update.outputs.new_builds }}"
         body: |
           Automatically pulled from [byond-tracy-offset-extractor](https://sovexe.github.io/byond-tracy-offset-extractor/).
 

@@ -105,6 +105,11 @@ _Static_assert(sizeof(long long) == 8, "incorrect size");
 #   include <io.h>
 #elif defined(UTRACY_LINUX)
 #	define _GNU_SOURCE
+/* utracy files routinely exceed 2 GiB; a 32-bit build without large file
+   support silently stops writing, so force 64-bit off_t here */
+#	define _FILE_OFFSET_BITS 64
+#	define _LARGEFILE_SOURCE
+#	define _LARGEFILE64_SOURCE
 #	include <errno.h>
 #	include <unistd.h>
 #	include <time.h>
@@ -127,6 +132,7 @@ char *getenv(char const *);
 #endif
 
 #include <stddef.h>
+#include <errno.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -865,7 +871,21 @@ int utracy_write(void const *const buf, size_t size) {
 #else
 UTRACY_INTERNAL
 int utracy_write(void const *const buf, size_t size) {
-	if(utracy.fstream != NULL) fwrite(buf, 1, size, utracy.fstream);
+	if(utracy.fstream == NULL) {
+		return 0;
+	}
+
+	if(fwrite(buf, 1, size, utracy.fstream) != size) {
+		static bool reported = false;
+		if(!reported) {
+			reported = true;
+			fprintf(stderr, "utracy: write failed (errno %d: %s); trace is now truncated\n",
+				errno, strerror(errno));
+			fflush(stderr);
+		}
+		return -1;
+	}
+
 	return 0;
 }
 #endif

@@ -103,11 +103,11 @@ cl.exe /nologo /std:c11 /O2 /LD /DNDEBUG prof.c ws2_32.lib /Fe:prof.dll /experim
 ```
 
 ```console
-clang.exe -std=c11 -m32 -shared -Ofast3 -DNDEBUG -fuse-ld=lld-link prof.c -lws2_32 -o prof.dll
+clang.exe -std=c11 -m32 -shared -O2 -DNDEBUG -fuse-ld=lld-link prof.c -lws2_32 -o prof.dll
 ```
 
 ```console
-gcc -D_FILE_OFFSET_BITS=64 -std=c11 -m32 -shared -fPIC -Ofast -s -DNDEBUG prof.c -pthread -o libprof.so
+gcc -D_FILE_OFFSET_BITS=64 -std=c11 -m32 -shared -fPIC -O2 prof.c -pthread -o libprof.so
 ```
 
 ## Source

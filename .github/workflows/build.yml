@@ -39,7 +39,7 @@ jobs:
 
     - name: Compile byond-tracy
       run: |
-        gcc -D_FILE_OFFSET_BITS=64 -std=c11 -m32 -shared -fPIC -Ofast -s -DNDEBUG prof.c -pthread -o libprof.so
+        gcc -D_FILE_OFFSET_BITS=64 -std=c11 -m32 -shared -fPIC -O2 prof.c -pthread -o libprof.so
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v7
